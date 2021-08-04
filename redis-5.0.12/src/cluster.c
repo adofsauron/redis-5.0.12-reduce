@@ -2987,6 +2987,11 @@ void clusterHandleSlaveFailover(void) {
     mstime_t data_age;
     mstime_t auth_age = mstime() - server.cluster->failover_auth_time;
     int needed_quorum = (server.cluster->size / 2) + 1;
+
+    if (server.cluster->size < 3) {
+        needed_quorum -= 1;
+    }
+
     int manual_failover = server.cluster->mf_end != 0 &&
                           server.cluster->mf_can_start;
     mstime_t auth_timeout, auth_retry_time;
@@ -3595,7 +3600,13 @@ void clusterCron(void) {
             if (!(node->flags & (CLUSTER_NODE_PFAIL|CLUSTER_NODE_FAIL))) {
                 serverLog(LL_DEBUG,"*** NODE %.40s possibly failing",
                     node->name);
-                node->flags |= CLUSTER_NODE_PFAIL;
+
+                if (server.cluster->size < 3) {
+                    node->flags |= CLUSTER_NODE_FAIL;
+                } else {
+                    node->flags |= CLUSTER_NODE_PFAIL;
+                }
+
                 update_state = 1;
             }
         }

@@ -2956,6 +2956,11 @@ void clusterFailoverReplaceYourMaster(void) {
 
     if (nodeIsMaster(myself) || oldmaster == NULL) return;
 
+    serverLog(LL_NOTICE,"clusterFailoverReplaceYourMaster: myself.name=[%.40s] myself.ip=[%s] myself.porr=[%d], "
+        "oldmaster.name=[%.40s] oldmaster.ip=[%s] oldmaster.porr=[%d]", 
+        myself->name, myself->ip, myself->port, 
+        oldmaster->name, oldmaster->ip, oldmaster->port);
+
     /* 1) Turn this node into a master. */
     clusterSetNodeAsMaster(myself);
     replicationUnsetMaster();

@@ -3627,7 +3627,7 @@ void clusterCron(void) {
                     break;
 
                 default:
-                    { // 其他为》=3节点以上情况
+                    { // 其他为 >=3 节点以上情况
                         node->flags |= CLUSTER_NODE_PFAIL;
                     }
                     break;

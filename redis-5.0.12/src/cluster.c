@@ -1218,6 +1218,11 @@ void markNodeAsFailingIfNeeded(clusterNode *node) {
     int failures;
     int needed_quorum = (server.cluster->size / 2) + 1;
 
+    // TODO: REDUCE
+    if (server.cluster->size < 3) {
+        needed_quorum -= 1;
+    }
+
     if (!nodeTimedOut(node)) return; /* We can reach it. */
     if (nodeFailed(node)) return; /* Already FAILing. */
 
@@ -3603,10 +3608,29 @@ void clusterCron(void) {
                     node->name);
 
                 // TODO: REDUCE
-                if (server.cluster->size < 3) {
-                    node->flags |= CLUSTER_NODE_FAIL;
-                } else {
-                    node->flags |= CLUSTER_NODE_PFAIL;
+                switch (server.cluster->size)
+                {
+                case 1:
+                    { // 只有一个分片, 则立即置为FAIL
+                        node->flags |= CLUSTER_NODE_FAIL;
+                    }
+                    break;
+
+                case 2:
+                    { // 两个分片, 如果是slave检测到则置为PFAIL, 如果是master检测到则置为FAIL
+                        if(nodeIsMaster(myself)) { 
+                            node->flags |= CLUSTER_NODE_FAIL;
+                        } else {
+                            node->flags |= CLUSTER_NODE_PFAIL;
+                        }
+                    }
+                    break;
+
+                default:
+                    { // 其他为》=3节点以上情况
+                        node->flags |= CLUSTER_NODE_PFAIL;
+                    }
+                    break;
                 }
 
                 update_state = 1;
@@ -3878,6 +3902,11 @@ void clusterUpdateState(void) {
      * to FAIL. */
     {
         int needed_quorum = (server.cluster->size / 2) + 1;
+
+        // TODO: REDUCE
+        if (server.cluster->size < 3) {
+            needed_quorum -= 1;
+        }
 
         if (reachable_masters < needed_quorum) {
             new_state = CLUSTER_FAIL;

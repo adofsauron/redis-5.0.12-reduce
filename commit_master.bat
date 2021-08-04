@@ -1,4 +1,6 @@
 
+git config --global http.sslVerify false
+
 git checkout master
 
 git add .

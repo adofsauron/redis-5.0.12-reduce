@@ -2988,6 +2988,7 @@ void clusterHandleSlaveFailover(void) {
     mstime_t auth_age = mstime() - server.cluster->failover_auth_time;
     int needed_quorum = (server.cluster->size / 2) + 1;
 
+    // TODO: REDUCE
     if (server.cluster->size < 3) {
         needed_quorum -= 1;
     }
@@ -3601,6 +3602,7 @@ void clusterCron(void) {
                 serverLog(LL_DEBUG,"*** NODE %.40s possibly failing",
                     node->name);
 
+                // TODO: REDUCE
                 if (server.cluster->size < 3) {
                     node->flags |= CLUSTER_NODE_FAIL;
                 } else {

@@ -4630,6 +4630,7 @@ static int clusterManagerCommandCreate(int argc, char **argv) {
     int node_len = cluster_manager.nodes->len;
     int replicas = config.cluster_manager_command.replicas;
     int masters_count = CLUSTER_MANAGER_MASTERS_COUNT(node_len, replicas);
+    // TODO: REDUCE
     if (masters_count < 1) {
         clusterManagerLogErr(
             "*** ERROR: Invalid configuration for cluster creation.\n"

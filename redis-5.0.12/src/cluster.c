@@ -1234,8 +1234,10 @@ void markNodeAsFailingIfNeeded(clusterNode *node) {
     serverLog(LL_NOTICE,
         "Marking node %.40s as failing (quorum reached).", node->name);
 
+    const char* self_role = (nodeIsMaster(myself)) ? "master" : "slave";
     serverLog(LL_NOTICE,
-        "$$$ set node to [CLUSTER_NODE_FAIL] by quorum: name=[%.40s] ip=[%s] port=[%d]",
+        "$$$ set node to [CLUSTER_NODE_FAIL] by quorum: self_role=[%s] failures=[%d] needed_quorum=[%d], name=[%.40s] ip=[%s] port=[%d]",
+            self_role, failures, needed_quorum,
             node->name, node->ip, node->port);
 
     /* Mark the node as failing. */
@@ -3646,8 +3648,14 @@ void clusterCron(void) {
                 }
 
                 const char* flag_str = node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL";
-                serverLog(LL_NOTICE,"$$$ set node to [%s] by check: name=[%.40s] ip=[%s] port=[%d]",
-                    flag_str, node->name, node->ip, node->port);
+                const char* self_role = (nodeIsMaster(myself)) ? "master" : "slave";
+                serverLog(LL_NOTICE,"$$$ set node to [%s] by check of cluster.size=[%d] self_role=[%s], node: name=[%.40s] ip=[%s] port=[%d]",
+                    flag_str,
+                    server.cluster->size, self_role,
+                    node->name, node->ip, node->port);
+
+                // myself is master then send fail ASAP
+                if (node_fail && nodeIsMaster(myself)) clusterSendFail(node->name);
 
                 update_state = 1;
             }

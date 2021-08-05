@@ -3619,13 +3619,13 @@ void clusterCron(void) {
                     node->name);
 
                 // TODO: CLUSTER_REDUCE
-                bool node_fail = false;
+                bool mark_node_fail = false;
                 switch (server.cluster->size)
                 {
                 case 1:
                     { // 只有一个分片, 则立即置为FAIL
                         node->flags |= CLUSTER_NODE_FAIL;
-                        node_fail = true;
+                        mark_node_fail = true;
                     }
                     break;
 
@@ -3633,7 +3633,7 @@ void clusterCron(void) {
                     { // 两个分片, 如果是slave检测到则置为PFAIL, 如果是master检测到则置为FAIL
                         if(nodeIsMaster(myself)) { 
                             node->flags |= CLUSTER_NODE_FAIL;
-                            node_fail = true;
+                            mark_node_fail = true;
                         } else {
                             node->flags |= CLUSTER_NODE_PFAIL;
                         }
@@ -3648,12 +3648,12 @@ void clusterCron(void) {
                 }
 
                 serverLog(LL_NOTICE,"$$$ set node to [%s] by check of cluster.size=[%d] self_role=[%s], node: name=[%.40s] ip=[%s] port=[%d]",
-                    node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL",
+                    mark_node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL",
                     server.cluster->size, (nodeIsMaster(myself)) ? "master" : "slave",
                     node->name, node->ip, node->port);
 
                 // node marked fail and myself is master then send fail ASAP
-                if (node_fail && (server.cluster->size > 1)) { 
+                if (mark_node_fail && (server.cluster->size > 1)) { 
                     clusterSendFail(node->name); 
                 }
 

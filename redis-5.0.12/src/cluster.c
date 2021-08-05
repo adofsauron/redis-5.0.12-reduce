@@ -1218,7 +1218,7 @@ void markNodeAsFailingIfNeeded(clusterNode *node) {
     int failures;
     int needed_quorum = (server.cluster->size / 2) + 1;
 
-    // TODO: REDUCE
+    // TODO: CLUSTER_REDUCE
     if (server.cluster->size < 3) {
         needed_quorum -= 1;
     }
@@ -3001,7 +3001,7 @@ void clusterHandleSlaveFailover(void) {
     mstime_t auth_age = mstime() - server.cluster->failover_auth_time;
     int needed_quorum = (server.cluster->size / 2) + 1;
 
-    // TODO: REDUCE
+    // TODO: CLUSTER_REDUCE
     if (server.cluster->size < 3) {
         needed_quorum -= 1;
     }
@@ -3615,7 +3615,7 @@ void clusterCron(void) {
                 serverLog(LL_DEBUG,"*** NODE %.40s possibly failing",
                     node->name);
 
-                // TODO: REDUCE
+                // TODO: CLUSTER_REDUCE
                 bool node_fail = false;
                 switch (server.cluster->size)
                 {
@@ -3918,7 +3918,7 @@ void clusterUpdateState(void) {
     {
         int needed_quorum = (server.cluster->size / 2) + 1;
 
-        // TODO: REDUCE
+        // TODO: CLUSTER_REDUCE
         if (server.cluster->size < 3) {
             needed_quorum -= 1;
         }

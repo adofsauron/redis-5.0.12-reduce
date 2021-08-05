@@ -3647,15 +3647,15 @@ void clusterCron(void) {
                     break;
                 }
 
-                const char* flag_str = node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL";
-                const char* self_role = (nodeIsMaster(myself)) ? "master" : "slave";
                 serverLog(LL_NOTICE,"$$$ set node to [%s] by check of cluster.size=[%d] self_role=[%s], node: name=[%.40s] ip=[%s] port=[%d]",
-                    flag_str,
-                    server.cluster->size, self_role,
+                    node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL",
+                    server.cluster->size, (nodeIsMaster(myself)) ? "master" : "slave",
                     node->name, node->ip, node->port);
 
                 // node marked fail and myself is master then send fail ASAP
-                if (node_fail && nodeIsMaster(myself)) clusterSendFail(node->name);
+                if (node_fail && (server.cluster->size > 1)) { 
+                    clusterSendFail(node->name); 
+                }
 
                 update_state = 1;
             }

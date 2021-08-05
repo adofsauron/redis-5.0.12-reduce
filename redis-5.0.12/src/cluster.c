@@ -1234,8 +1234,9 @@ void markNodeAsFailingIfNeeded(clusterNode *node) {
     serverLog(LL_NOTICE,
         "Marking node %.40s as failing (quorum reached).", node->name);
 
-    serverLog(LL_NOTICE,">>> set node to [CLUSTER_NODE_FAIL] by quorum: name=[%.40s] ip=[%s] port=[%d]",
-                    node->name, node->ip, node->port);
+    serverLog(LL_NOTICE,
+        "$$$ set node to [CLUSTER_NODE_FAIL] by quorum: name=[%.40s] ip=[%s] port=[%d]",
+            node->name, node->ip, node->port);
 
     /* Mark the node as failing. */
     node->flags &= ~CLUSTER_NODE_PFAIL;
@@ -2959,10 +2960,10 @@ void clusterFailoverReplaceYourMaster(void) {
 
     if (nodeIsMaster(myself) || oldmaster == NULL) return;
 
-    serverLog(LL_NOTICE,">>> clusterFailoverReplaceYourMaster: myself.name=[%.40s] myself.ip=[%s] myself.port=[%d], "
+    serverLog(LL_NOTICE,"$$$ clusterFailoverReplaceYourMaster: myself.name=[%.40s] myself.ip=[%s] myself.port=[%d], "
         "oldmaster.name=[%.40s] oldmaster.ip=[%s] oldmaster.port=[%d]", 
-        myself->name, myself->ip, myself->port, 
-        oldmaster->name, oldmaster->ip, oldmaster->port);
+            myself->name, myself->ip, myself->port, 
+            oldmaster->name, oldmaster->ip, oldmaster->port);
 
     /* 1) Turn this node into a master. */
     clusterSetNodeAsMaster(myself);
@@ -3645,7 +3646,7 @@ void clusterCron(void) {
                 }
 
                 const char* flag_str = node_fail ? "CLUSTER_NODE_FAIL" : "CLUSTER_NODE_PFAIL";
-                serverLog(LL_NOTICE,">>> set node to [%s] by check: name=[%.40s] ip=[%s] port=[%d]",
+                serverLog(LL_NOTICE,"$$$ set node to [%s] by check: name=[%.40s] ip=[%s] port=[%d]",
                     flag_str, node->name, node->ip, node->port);
 
                 update_state = 1;

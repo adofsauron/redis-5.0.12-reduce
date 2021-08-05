@@ -3654,7 +3654,7 @@ void clusterCron(void) {
                     server.cluster->size, self_role,
                     node->name, node->ip, node->port);
 
-                // myself is master then send fail ASAP
+                // node marked fail and myself is master then send fail ASAP
                 if (node_fail && nodeIsMaster(myself)) clusterSendFail(node->name);
 
                 update_state = 1;

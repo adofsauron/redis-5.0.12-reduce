@@ -40,6 +40,7 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <math.h>
+#include <stdbool.h>
 
 /* A global reference to myself is handy to make code more clear.
  * Myself always points to server.cluster->myself, that is, the clusterNode

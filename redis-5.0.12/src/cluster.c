@@ -2962,8 +2962,8 @@ void clusterFailoverReplaceYourMaster(void) {
 
     if (nodeIsMaster(myself) || oldmaster == NULL) return;
 
-    serverLog(LL_NOTICE,"$$$ clusterFailoverReplaceYourMaster: myself.name=[%.40s] myself.ip=[%s] myself.port=[%d], "
-        "oldmaster.name=[%.40s] oldmaster.ip=[%s] oldmaster.port=[%d]", 
+    serverLog(LL_NOTICE,"$$$ clusterFailoverReplaceYourMaster, myself: name=[%.40s] ip=[%s] port=[%d], "
+        "oldmaster: name=[%.40s] ip=[%s] port=[%d]", 
             myself->name, myself->ip, myself->port, 
             oldmaster->name, oldmaster->ip, oldmaster->port);
 
